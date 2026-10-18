@@ -1,0 +1,34 @@
+{
+  "name": "@sherpa/server",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "dev": "node ../../packages/db/scripts/with-env.mjs tsx watch --clear-screen=false src/server.ts",
+    "start": "node ../../packages/db/scripts/with-env.mjs tsx src/server.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint src",
+    "test": "node ../../packages/db/scripts/with-env.mjs vitest run"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.1",
+    "@fastify/jwt": "^10.2.5",
+    "@fastify/websocket": "^11.3.4",
+    "@sherpa/adapters": "workspace:*",
+    "@sherpa/agent": "workspace:*",
+    "@sherpa/db": "workspace:*",
+    "@sherpa/shared": "workspace:*",
+    "fastify": "^5.12.7",
+    "node-cron": "^4.6.0",
+    "pino": "^10.4.0",
+    "ws": "^8.18.3",
+    "zod": "^4.1.12",
+    "fastify-plugin": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.20.6"
+  },
+  "type": "module"
+}

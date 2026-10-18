@@ -1,0 +1,14 @@
+appId: host.exp.Exponent
+name: "13 With F11–F13 on (test config): health band, pricing disclaimer"
+# Requires config/features.json with F11–F13 enabled and approved, then a server restart.
+---
+- runFlow: ../subflows/sign-in-maya.yaml
+- assertVisible: "At-risk relationships"
+- tapOn: "Accounts"
+- tapOn: "Acme Manufacturing.*"
+- tapOn: "Insights"
+- assertVisible: "Relationship health"
+- tapOn: "New deal"
+- tapOn: "Send: They need a 2.5 million equipment loan.*"
+- tapOn: "Pricing guidance (internal)"
+- assertVisible: "Indicative internal guidance. Not a quote.*"

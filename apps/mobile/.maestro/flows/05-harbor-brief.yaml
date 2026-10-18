@@ -1,0 +1,10 @@
+appId: host.exp.Exponent
+name: "05 Harbor brief → source tags → privacy toggle"
+---
+- runFlow: ../subflows/sign-in-maya.yaml
+- scrollUntilVisible: { element: "Harbor Logistics at 4:00 PM. Open brief." }
+- tapOn: "Harbor Logistics at 4:00 PM. Open brief."
+- extendedWaitUntil: { visible: "What Sherpa will say", timeout: 15000 }
+- assertVisible: "Salesforce · as of .*"
+- tapOn: "Read balances and exposure aloud"
+- assertVisible: ".*\\$8M.*"

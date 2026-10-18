@@ -1,0 +1,11 @@
+appId: host.exp.Exponent
+name: "12 With F11–F13 off: no Live, Pricing or Health UI anywhere"
+---
+- runFlow: ../subflows/sign-in-maya.yaml
+- assertNotVisible: "At-risk relationships"
+- tapOn: "Accounts"
+- tapOn: "Acme Manufacturing.*"
+- tapOn: "Insights"
+- assertNotVisible: "Relationship health"
+- tapOn: "New deal"
+- assertNotVisible: "Pricing guidance (internal)"

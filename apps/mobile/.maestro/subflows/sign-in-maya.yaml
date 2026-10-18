@@ -1,0 +1,10 @@
+appId: host.exp.Exponent
+---
+- openLink: exp://127.0.0.1:8081
+- extendedWaitUntil:
+    visible: "Sign in"
+    timeout: 30000
+- tapOn: "Sign in as Maya Chen.*"
+- extendedWaitUntil:
+    visible: "Good .*, Maya"
+    timeout: 15000

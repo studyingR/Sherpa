@@ -1,0 +1,38 @@
+{
+  "id": "G3",
+  "title": "No complaint false positive",
+  "ctx": {
+    "accountName": "Acme Manufacturing",
+    "meetingSubject": "Acme Manufacturing annual review",
+    "attendees": [
+      {
+        "name": "Jane Ruiz",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000JaneR1"
+      },
+      {
+        "name": "Tom Lee",
+        "role": "Controller",
+        "external": true,
+        "contactId": "003Mock00000TomLe1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Jane said the wire team has been great lately and complimented Tom's onboarding. No issues. I'll send the updated fee schedule by Friday."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "nextSteps": [
+      {
+        "title": "Send the updated fee schedule",
+        "owner": "RM",
+        "dueDate": "2026-10-23",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

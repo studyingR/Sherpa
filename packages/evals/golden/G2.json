@@ -1,0 +1,41 @@
+{
+  "id": "G2",
+  "title": "Opportunity not approved",
+  "ctx": {
+    "accountName": "Acme Manufacturing",
+    "meetingSubject": "Acme Manufacturing annual review",
+    "attendees": [
+      {
+        "name": "Jane Ruiz",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000JaneR1"
+      },
+      {
+        "name": "Tom Lee",
+        "role": "Controller",
+        "external": true,
+        "contactId": "003Mock00000TomLe1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes, that's the one.",
+    "Good meeting. They're expanding the Newark plant and need about two and a half million in equipment financing, probably Q1. Jane complained that wires were delayed twice this month. They're starting to buy from a German supplier, so FX came up. I said I'd send a term sheet by Friday.",
+    "Treasury services should call Jane by Wednesday.",
+    "Not yet, hold off.",
+    "Confirm."
+  ],
+  "expected": {
+    "complaint": true,
+    "mnpi": false,
+    "opportunities": [
+      {
+        "product": "Equipment financing",
+        "amount": 2500000,
+        "approved": false
+      }
+    ],
+    "saved": true
+  }
+}

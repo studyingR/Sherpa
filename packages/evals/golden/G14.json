@@ -1,0 +1,38 @@
+{
+  "id": "G14",
+  "title": "Delegated follow-up",
+  "ctx": {
+    "accountName": "Harbor Logistics",
+    "meetingSubject": "Harbor Logistics line renewal",
+    "attendees": [
+      {
+        "name": "Ana Patel",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000AnaPa1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Priya should collect the AR aging by October 23. I'll call Ana by Thursday."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "nextSteps": [
+      {
+        "title": "Collect the AR aging",
+        "owner": "Priya Shah",
+        "dueDate": "2026-10-23",
+        "clientCommitment": false
+      },
+      {
+        "title": "Call Ana",
+        "owner": "RM",
+        "dueDate": "2026-10-22",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

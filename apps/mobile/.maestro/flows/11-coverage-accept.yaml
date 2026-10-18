@@ -1,0 +1,10 @@
+appId: host.exp.Exponent
+name: "11 Coverage plan → accept Northgate → task created"
+---
+- runFlow: ../subflows/sign-in-maya.yaml
+- tapOn: "Me"
+- tapOn: "Coverage plan.*"
+- extendedWaitUntil: { visible: "Northgate Dental Partners", timeout: 10000 }
+- tapOn: { text: "Accept", index: 0 }
+- tapOn: "Confirm"
+- extendedWaitUntil: { visible: "Task created: Reach out to Northgate Dental Partners", timeout: 10000 }

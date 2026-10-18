@@ -1,0 +1,69 @@
+{
+  "id": "G1",
+  "title": "Acme annual review (happy path)",
+  "ctx": {
+    "accountName": "Acme Manufacturing",
+    "meetingSubject": "Acme Manufacturing annual review",
+    "attendees": [
+      {
+        "name": "Jane Ruiz",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000JaneR1"
+      },
+      {
+        "name": "Tom Lee",
+        "role": "Controller",
+        "external": true,
+        "contactId": "003Mock00000TomLe1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes, that's the one.",
+    "Good meeting. They're expanding the Newark plant and need about two and a half million in equipment financing, probably Q1. Jane complained that wires were delayed twice this month. They're starting to buy from a German supplier, so FX came up. I said I'd send a term sheet by Friday.",
+    "Treasury services should call Jane by Wednesday.",
+    "Yes.",
+    "Confirm."
+  ],
+  "expected": {
+    "purpose": "ANNUAL_REVIEW",
+    "complaint": true,
+    "mnpi": false,
+    "specialistInterest": [
+      "FX",
+      "EQUIPMENT_FINANCE",
+      "TREASURY_MANAGEMENT"
+    ],
+    "nextSteps": [
+      {
+        "title": "Send equipment financing term sheet",
+        "owner": "RM",
+        "dueDate": "2026-10-23",
+        "clientCommitment": true
+      },
+      {
+        "title": "Call Jane about wire delays",
+        "owner": "Treasury Services",
+        "dueDate": "2026-10-21",
+        "clientCommitment": false
+      },
+      {
+        "title": "Introduce FX specialist",
+        "owner": "RM",
+        "dueDate": null,
+        "clientCommitment": false,
+        "optional": true
+      }
+    ],
+    "opportunities": [
+      {
+        "product": "Equipment financing",
+        "amount": 2500000,
+        "closeQuarter": "Q1 2027",
+        "approved": true
+      }
+    ],
+    "saved": true
+  }
+}

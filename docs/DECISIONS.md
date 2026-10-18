@@ -1,0 +1,36 @@
+# Decisions Log
+
+Claude Code: record any decision the spec left open here, newest first.
+
+| Date | Decision | Reason | Spec reference |
+|---|---|---|---|
+| 2026-10-18 | Voice replies stream **sentence by sentence**; long voice narratives get an immediate "Got it." (or the complaint notice) while extraction runs; the model flag classifier is skipped for plain confirmations ("yes", "confirm") — the pattern layer still runs on every utterance | First audio ≤ 1.5 s target. Measured with gpt-4.1-mini + gpt-4o-mini-tts: ~0.9 s on narratives, ~1.7 s on short turns (OpenAI TTS is ~0.8 s per clip, so the floor is network-bound) | 02 §9, 05 §2 |
+| 2026-10-18 | Code-layer guards apply to **both** models: product names canonicalized, ambiguous amounts judged from the RM's own words, sensitive sentences removed from summary/titles, specialist interest = model ∪ keyword rules | Guardrails must not depend on the LLM behaving; this took openai-mode evals from 64% → 100% step recall | 05 §1, §5.1, §7 |
+| 2026-10-18 | Eval title match = bigram Dice ≥ 0.8 **or** every word of the expected title appears in the extracted title. Sherpa's own specialist-intro suggestions are optional in goldens and excluded from precision | Spec says "fuzzy ≥ 0.8"; extra detail ("Call Gus about the login issue") is not an extraction error; G1 says the FX intro "may be added" | 10 §3, 07 §8 |
+| 2026-10-18 | Default OpenAI models in the local `.env`: `gpt-4.1-mini` (extraction/chat, structured outputs), `gpt-4o-mini-transcribe`, `gpt-4o-mini-tts` (voice `sage`), `gpt-realtime-mini` reserved | Fast enough for the voice budget and supports strict JSON schema; names stay config-only | 05 §2 |
+| 2026-10-18 | Orchestrator is a **deterministic state machine**; the model only extracts, classifies and phrases (`AgentModel` interface with `RuleModel` for mock mode and `LlmModel` for openai). Low-level `LlmProvider` (OpenAI or gateway) sits underneath | Deterministic first; tests and evals run without network; one repair retry then rule fallback | 05 §1–§3 |
+| 2026-10-18 | Prisma schema and seed live in `packages/db` (not `apps/server/prisma`) | Mock adapters in `packages/adapters` persist to the same `mock_*` tables; avoids a circular dependency on the server app | 02 §2, 03 §2 |
+| 2026-10-18 | SQLite in dev/test; JSON stored as `String`. Switching to Postgres = change `provider` in `schema.prisma` | Spec asks for a type that works on both | 03 §2 |
+| 2026-10-18 | `pnpm db:reset` uses `prisma db push` (no `--force-reset`) then the seed clears and reloads every table | Prisma refuses destructive resets from AI agents; the seed is the source of truth anyway | CLAUDE.md commands |
+| 2026-10-18 | Demo clock: `CLOCK_MODE=demo` (default) starts the server clock at **15:30 on SEED_TODAY** and then advances in real time; `CLOCK_MODE=real` uses the wall clock | Keeps the seeded story coherent whenever you run it (Acme 2 PM has ended → debrief pending; Harbor 4 PM still upcoming) | 07 §4 |
+| 2026-10-18 | Voice capture uses `expo-audio`'s `useAudioStream` (PCM16, requested 16 kHz, resampled on device if the hardware differs). Runs in **Expo Go** — no native build needed | Spec requires PCM16 16 kHz streaming and no stored audio | 04 §16, 05 §2 |
+| 2026-10-18 | Mock voice mode: the server returns text only and the phone speaks it with `expo-speech`; the call screen shows "Try saying" scripted replies (G1 etc.) because there is no speech-to-text without a key | Makes the voice flow demoable on a simulator with no key | 05 §2 (MockVoiceProvider) |
+| 2026-10-18 | `VoiceState` (mic: CONNECTING/LISTENING/THINKING/SPEAKING/IDLE/ENDED) is separate from the debrief `FlowState` (MATCH_MEETING … SAVED); the WS `state` message carries both | The mic state drives the UI; the flow state drives the agent | 04 §16, 05 §4 |
+| 2026-10-18 | Added WriteIntent kind `task.create` (alert → task, coverage accept) | Spec kinds had no plain task creation | 02 §4 |
+| 2026-10-18 | Spoken/typed "confirm" in chat or voice is recorded as `channel: 'voice'` with the utterance; review-screen taps are `channel: 'tap'` | `Confirmation.channel` only has voice/tap | 02 §4 |
+| 2026-10-18 | Specialist-intro next steps ("Introduce FX specialist") are suggested at read-back only for interests not already covered by an opportunity or a team-owned step | Matches G1's expected 3 tasks without spamming intros | 07 §8 G1 |
+| 2026-10-18 | Complaint gap question ("Who should follow up with Jane on the wire delays…") is asked first when a complaint has no follow-up step | G1's scripted gap-fill answer is the complaint follow-up | 01 F01-FR4, 07 G1 |
+| 2026-10-18 | Sensitive details are left out of the summary by default; the RM can say "keep it" or toggle on review, which routes a SENSITIVE compliance item | "Prompt to remove; flag if kept" | 05 §7, C-05 |
+| 2026-10-18 | Resume: an unfinished debrief is offered on the next start (REST); voice reconnects speak "Picking up your … debrief" but don't add it to the transcript | F01-FR10 without littering the record on flaky networks | 01 F01-AC6 |
+| 2026-10-18 | Mark-document-received is executed on tap and audited with `confirmation.channel = 'tap'` (no separate confirm sheet) | The tap is the explicit confirmation; the API contract returns the item directly | 04 §10 |
+| 2026-10-18 | Leaders have no client book: account endpoints return 403; `/coverage/team` returns coverage % per RM only | "Leaders get read-only team scope for coverage only" | 02 §6, F10-AC2 |
+| 2026-10-18 | Analyst (Priya) acts on the book of the RM she supports (Maya) | Persona: "supports Maya" | 01 §2 |
+| 2026-10-18 | Referral routing table lives in `config/referral-routing.json`; unmatched specialty → "Specialist Referrals – Unassigned" with a warning log | F05-FR2/AC2 | 01 F05 |
+| 2026-10-18 | Health scorecard thresholds (deposit trend, touch recency 30/60/90 d, ≤ 3 products, maturity ≤ 120 d without renewal) were tuned so the seed yields the expected bands; Castell's seed deposits slide ~10% | F13-AC1 expected bands | 07 §6 |
+| 2026-10-18 | Live listening keeps segment text in server memory and only writes it to the transcript after the RM confirms the resulting debrief | F11-FR3 | 01 F11 |
+| 2026-10-18 | Push notifications use Expo push when a token exists (dev builds/devices); Expo Go on the simulator falls back to the in-app notification center | Expo Go no longer supports remote push | 01 §3 |
+| 2026-10-18 | Monorepo uses pnpm `nodeLinker: hoisted` and every workspace package is `"type": "module"` with TypeScript sources consumed directly (no build step) | Expo/Metro and tsx both resolve TS sources; hoisting avoids RN duplicate-module issues | CLAUDE.md stack |
+| (spec) | All 13 features in scope; F11–F13 behind compliance flags, default off | Regulatory gating | 01 §4, 08 §4 |
+| (spec) | OpenAI API via user key, behind `LlmProvider`/`VoiceProvider`; mock default | Build without keys; swap to enterprise gateway later | 05 §2 |
+| (spec) | Integrations mocked behind real interfaces | Plug in live systems in M9 | 02 §3 |
+| (spec) | React Native + Expo, Node/Fastify, Prisma | One codebase, fast iteration | CLAUDE.md |

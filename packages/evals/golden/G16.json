@@ -1,0 +1,43 @@
+{
+  "id": "G16",
+  "title": "Merchant services (small business)",
+  "ctx": {
+    "rm": "Devon Brooks",
+    "accountName": "Lakeside Auto Repair",
+    "meetingSubject": "Lakeside check-in",
+    "attendees": [
+      {
+        "name": "Joe Kaminski",
+        "role": "Owner",
+        "external": true,
+        "contactId": "003Mock00000JoeKa1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Joe wants to accept cards at the counter. I'll send merchant information by Friday."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "specialistInterest": [
+      "MERCHANT_SERVICES"
+    ],
+    "nextSteps": [
+      {
+        "title": "Send merchant information",
+        "owner": "RM",
+        "dueDate": "2026-10-23",
+        "clientCommitment": false
+      },
+      {
+        "title": "Introduce Merchant Services specialist",
+        "owner": "RM",
+        "dueDate": null,
+        "clientCommitment": false,
+        "optional": true
+      }
+    ]
+  }
+}

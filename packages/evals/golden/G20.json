@@ -1,0 +1,43 @@
+{
+  "id": "G20",
+  "title": "SBA 504 for a building",
+  "ctx": {
+    "rm": "Devon Brooks",
+    "accountName": "Greenline Dental Group",
+    "meetingSubject": "Greenline Dental check-in",
+    "attendees": [
+      {
+        "name": "Dr. Lena Ortiz",
+        "role": "Owner",
+        "external": true,
+        "contactId": "003Mock00000LenaO1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Dr. Ortiz is considering an SBA 504 loan of about one point two million for a building purchase in Q2. I'll introduce the SBA desk by Friday."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "specialistInterest": [
+      "SBA"
+    ],
+    "opportunities": [
+      {
+        "product": "SBA loan",
+        "amount": 1200000,
+        "closeQuarter": "Q2 2027"
+      }
+    ],
+    "nextSteps": [
+      {
+        "title": "Introduce the SBA desk",
+        "owner": "RM",
+        "dueDate": "2026-10-23",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

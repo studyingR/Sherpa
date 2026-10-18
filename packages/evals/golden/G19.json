@@ -1,0 +1,32 @@
+{
+  "id": "G19",
+  "title": "MNPI and complaint together",
+  "ctx": {
+    "accountName": "Riverline Plastics",
+    "meetingSubject": "Riverline relationship meeting",
+    "attendees": [
+      {
+        "name": "Gus Volkov",
+        "role": "President",
+        "external": true,
+        "contactId": "003Mock00000GusVo1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Gus said off the record they're selling a division, not public yet. He's also frustrated that the online banking login keeps failing. Treasury services should call Gus by Thursday."
+  ],
+  "expected": {
+    "complaint": true,
+    "mnpi": true,
+    "nextSteps": [
+      {
+        "title": "Call Gus",
+        "owner": "Treasury Services",
+        "dueDate": "2026-10-22",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

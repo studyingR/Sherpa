@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.turbo/
+.expo/
+*.db
+*.db-journal
+.env
+.env.local
+apps/mobile/ios/
+apps/mobile/android/
+packages/evals/reports/*.md
+!packages/evals/reports/.gitkeep
+coverage/
+.DS_Store
+*.log
+tmp/

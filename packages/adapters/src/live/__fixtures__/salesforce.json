@@ -1,0 +1,6 @@
+{
+  "account": { "Id": "001Live000000Acme1", "Name": "Acme Manufacturing", "BillingCity": "Newark", "BillingState": "NJ", "Segment__c": "Commercial", "Coverage_Tier__c": "A", "OwnerId": "005Live00000Maya1", "Industry": "Industrial machinery", "Revenue_Band__c": "$50M–$100M", "Relationship_Since__c": "2014-03-01" },
+  "contacts": { "totalSize": 1, "done": true, "records": [{ "Id": "003Live00000Jane1", "AccountId": "001Live000000Acme1", "Name": "Jane Ruiz", "Title": "CFO", "Email": "jane.ruiz@acme-mfg.example", "Phone": null, "Primary__c": true }] },
+  "tasks": { "totalSize": 1, "done": true, "records": [{ "Id": "00TLive00000Task1", "WhatId": "001Live000000Acme1", "What": { "Name": "Acme Manufacturing" }, "Subject": "Send term sheet", "OwnerId": "005Live00000Maya1", "Owner": { "Name": "Maya Chen" }, "ActivityDate": "2026-10-23", "Status": "Not Started", "Client_Commitment__c": true, "Debrief__c": null }] },
+  "composite": { "compositeResponse": [{ "referenceId": "debrief", "httpStatusCode": 201, "body": { "id": "a0DLive00000Deb01", "success": true } }] }
+}

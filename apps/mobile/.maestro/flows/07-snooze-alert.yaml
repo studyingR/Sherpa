@@ -1,0 +1,10 @@
+appId: host.exp.Exponent
+name: "07 Alerts → snooze Castell breach risk → moves to Snoozed"
+---
+- runFlow: ../subflows/sign-in-maya.yaml
+- tapOn: "Alerts"
+- extendedWaitUntil: { visible: "DSCR 1.31x is within 10% of the 1.25x covenant", timeout: 10000 }
+- tapOn: { text: "Snooze", index: 0 }
+- tapOn: "7 days"
+- tapOn: "Snoozed"
+- assertVisible: "DSCR 1.31x is within 10% of the 1.25x covenant"

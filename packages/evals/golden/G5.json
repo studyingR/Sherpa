@@ -1,0 +1,40 @@
+{
+  "id": "G5",
+  "title": "Ambiguous amount",
+  "ctx": {
+    "accountName": "Harbor Logistics",
+    "meetingSubject": "Harbor Logistics line renewal",
+    "attendees": [
+      {
+        "name": "Ana Patel",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000AnaPa1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "They want maybe one point five for a new line. I'll send renewal options by Friday."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "opportunities": [
+      {
+        "product": "Line of credit",
+        "amount": null
+      }
+    ],
+    "missingIncludes": "opportunity.amount",
+    "gapQuestionIncludes": "how much is the line of credit",
+    "nextSteps": [
+      {
+        "title": "Send renewal options",
+        "owner": "RM",
+        "dueDate": "2026-10-23",
+        "clientCommitment": false
+      }
+    ]
+  }
+}
