@@ -1,10 +1,15 @@
 appId: host.exp.Exponent
 ---
+# Start from a clean session: stop Expo Go and clear the simulator keychain
+# (expo-secure-store keeps the session token there), then reload the bundle.
+- stopApp
+- clearKeychain
 - openLink: exp://127.0.0.1:8081
 - extendedWaitUntil:
     visible: "Sign in"
     timeout: 30000
-- tapOn: "Sign in as Maya Chen.*"
+# Match by role, not name: SEED_PRIMARY_RM_NAME can rename the commercial RM.
+- tapOn: "Sign in as .*, Commercial RM.*"
 - extendedWaitUntil:
-    visible: "Good .*, Maya"
+    visible: "Good (morning|afternoon|evening), .*"
     timeout: 15000

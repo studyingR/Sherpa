@@ -49,7 +49,9 @@ import { api, cached } from './client';
 export type Offline<T> = T & { __offline?: boolean };
 
 export const API = {
+  authConfig: () => api<{ personas: boolean; google: boolean }>('/auth/config'),
   personas: () => api<Persona[]>('/auth/personas'),
+  signInSupabase: (accessToken: string) => api<SignInResponse>('/auth/supabase', { body: { accessToken } }),
   signIn: (personaId: string) => api<SignInResponse>('/auth/sign-in', { body: { personaId } }),
   signOut: () => api<{ ok: true }>('/auth/sign-out', { method: 'POST', body: {} }),
   me: () => api<User>('/me'),

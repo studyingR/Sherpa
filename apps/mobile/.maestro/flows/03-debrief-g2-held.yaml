@@ -3,12 +3,12 @@ name: "03 Debrief G2 → saved shows Held · not approved"
 ---
 - runFlow: ../subflows/sign-in-maya.yaml
 - tapOn: "Type instead"
-- extendedWaitUntil: { visible: "Is that the one?", timeout: 15000 }
+- extendedWaitUntil: { visible: ".*Is that the one\\?", timeout: 15000 }
 - tapOn: "Send: Yes, that's the one."
 - tapOn: "Send: Good meeting.*"
 - tapOn: "Send: Treasury services should call Jane by Wednesday."
-- extendedWaitUntil: { visible: "Say yes to approve", timeout: 15000 }
+- extendedWaitUntil: { visible: ".*Say yes to approve.*", timeout: 15000 }
 - tapOn: "Send: Not yet, hold off."
 - tapOn: "Send: Confirm."
 - extendedWaitUntil: { visible: "Saved to Salesforce", timeout: 15000 }
-- scrollUntilVisible: { element: "Held · not approved" }
+- scrollUntilVisible: { element: "Held · not approved", centerElement: true }

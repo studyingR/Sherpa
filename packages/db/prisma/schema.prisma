@@ -608,3 +608,13 @@ model AppMeta {
   key   String @id
   value String
 }
+
+/// Who may sign in with an external identity (Google via Supabase) and which Sherpa user they act as.
+/// Allowlist only: an email not listed here cannot sign in.
+model AuthIdentity {
+  email     String   @id
+  userId    String
+  provider  String   @default("google")
+  createdAt DateTime @default(now())
+  lastLoginAt DateTime?
+}

@@ -25,6 +25,7 @@ import {
   type FlagName,
 } from '@sherpa/shared';
 import type { Deps } from '../deps';
+import { createSupabaseVerifier } from '../auth/supabase';
 import type { Services } from '../services';
 import { readPrefs } from '../services/compliance';
 import { AppError, forbidden } from '../lib/errors';
@@ -48,22 +49,49 @@ export async function registerRoutes(app: FastifyInstance, d: Deps, s: Services)
   app.get('/v1/health', async () => ({ ok: true, llm: d.config.LLM_MODE, voice: d.config.VOICE_MODE, integrations: d.config.INTEGRATIONS_MODE }));
 
   // ------------------------------------------------------------------ 1. auth + profile
-  app.get('/v1/auth/personas', async () => {
-    if (d.config.NODE_ENV === 'production') throw forbidden('Persona sign-in is for development only.');
-    return d.adapters.identity.listPersonas();
-  });
-  app.post('/v1/auth/sign-in', async (req) => {
-    const { personaId } = parse(SignInRequest, req.body);
-    let user;
-    try {
-      user = await d.adapters.identity.signIn(personaId);
-    } catch {
-      throw new AppError('UNAUTHENTICATED', "We couldn't sign you in with that profile.");
-    }
+  const personasAllowed = d.config.AUTH_MODE !== 'supabase' && d.config.NODE_ENV !== 'production';
+  const verifySupabase = createSupabaseVerifier(d.config);
+
+  async function issueSession(userId: string) {
+    const user = await d.adapters.identity.getUser(userId);
+    if (!user) throw new AppError('UNAUTHENTICATED', "That Sherpa account doesn't exist.");
     const sid = randomUUID();
     await d.db.session.create({ data: { id: sid, userId: user.id, channel: 'APP', createdAt: new Date(), expiresAt: new Date(Date.now() + SESSION_HOURS * 3600_000) } });
     const token = app.jwt.sign({ sub: user.id, sid }, { expiresIn: `${SESSION_HOURS}h` });
     return { token, user };
+  }
+
+  /** Tells the app which sign-in options to show. */
+  app.get('/v1/auth/config', async () => ({ personas: personasAllowed, google: Boolean(verifySupabase && d.config.AUTH_MODE !== 'personas') }));
+
+  app.get('/v1/auth/personas', async () => {
+    if (!personasAllowed) throw forbidden('Test profiles are for development only.');
+    return d.adapters.identity.listPersonas();
+  });
+  app.post('/v1/auth/sign-in', async (req) => {
+    if (!personasAllowed) throw forbidden('Test profiles are for development only.');
+    const { personaId } = parse(SignInRequest, req.body);
+    try {
+      await d.adapters.identity.signIn(personaId);
+    } catch {
+      throw new AppError('UNAUTHENTICATED', "We couldn't sign you in with that profile.");
+    }
+    return issueSession(personaId);
+  });
+
+  /** Google via Supabase Auth: verify the Supabase token, then the allowlist decides which Sherpa user this is. */
+  app.post('/v1/auth/supabase', async (req) => {
+    if (!verifySupabase || d.config.AUTH_MODE === 'personas') throw new AppError('NOT_FOUND', 'Not found.');
+    const { accessToken } = parse(z.object({ accessToken: z.string().min(20) }), req.body);
+    const identity = await verifySupabase(accessToken);
+    const allowed = await d.db.authIdentity.findUnique({ where: { email: identity.email } });
+    if (!allowed) {
+      await d.audit.record({ userId: 'anonymous', action: 'auth.denied', system: 'SHERPA', object: 'Session', targetId: identity.email, requestId: req.id, at: d.clock.now() });
+      throw new AppError('FORBIDDEN', "Your Google account isn't set up for Sherpa yet. Ask your administrator to add it.");
+    }
+    await d.db.authIdentity.update({ where: { email: identity.email }, data: { lastLoginAt: new Date() } });
+    await d.audit.record({ userId: allowed.userId, action: 'auth.signin.google', system: 'SHERPA', object: 'Session', requestId: req.id, at: d.clock.now() });
+    return issueSession(allowed.userId);
   });
   app.post('/v1/auth/sign-out', auth, async (req) => {
     const header = req.headers.authorization!.slice(7);

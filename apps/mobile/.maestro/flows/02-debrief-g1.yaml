@@ -3,15 +3,15 @@ name: "02 Debrief (chat) G1 → review → approve → confirm → saved"
 ---
 - runFlow: ../subflows/sign-in-maya.yaml
 - tapOn: "Type instead"
-- extendedWaitUntil: { visible: "Is that the one?", timeout: 15000 }
+- extendedWaitUntil: { visible: ".*Is that the one\\?", timeout: 15000 }
 - tapOn: "Send: Yes, that's the one."
 - tapOn: "Send: Good meeting.*"
-- extendedWaitUntil: { visible: "I'm logging that as a complaint, per policy.", timeout: 15000 }
+- extendedWaitUntil: { visible: ".*I'm logging that as a complaint, per policy.*", timeout: 15000 }
 - tapOn: "Send: Treasury services should call Jane by Wednesday."
 - extendedWaitUntil: { visible: "Review on screen", timeout: 15000 }
 - tapOn: "Review on screen"
 - assertVisible: "Logged as a complaint, per policy"
-- scrollUntilVisible: { element: "Approve creating this opportunity" }
+- scrollUntilVisible: { element: "Approve creating this opportunity", centerElement: true }
 - tapOn: "Approve creating this opportunity"
 - tapOn: "Confirm & save to Salesforce"
 - extendedWaitUntil: { visible: "Saved to Salesforce", timeout: 15000 }

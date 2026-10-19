@@ -154,8 +154,16 @@ export async function clearAll(db: Db): Promise<void> {
   ]);
 }
 
-export async function seed(db: Db, today: Date): Promise<{ accounts: number }> {
+export interface SeedOptions {
+  /** Display name for the commercial RM persona (u_maya). Defaults to the spec's "Maya Chen". */
+  primaryRmName?: string;
+}
+
+export async function seed(db: Db, today: Date, opts: SeedOptions = {}): Promise<{ accounts: number }> {
   await clearAll(db);
+  const rmName = opts.primaryRmName?.trim() || 'Maya Chen';
+  // Synthetic work address that follows the display name (e.g. lalit.dhawan@bank.example).
+  const rmEmail = `${rmName.toLowerCase().replace(/[^a-z]+/g, '.').replace(/^\.|\.$/g, '')}@bank.example`;
   const iso = (n: number) => toIsoDate(addDays(today, n));
   const at = (n: number, h = 9, m = 0) => {
     const d = addDays(today, n);
@@ -167,7 +175,7 @@ export async function seed(db: Db, today: Date): Promise<{ accounts: number }> {
 
   // ---------- Users ----------
   for (const u of USERS) {
-    await db.user.create({ data: { ...u, prefsJson: JSON.stringify(DEFAULT_PREFERENCES) } });
+    await db.user.create({ data: { ...u, ...(u.id === 'u_maya' ? { name: rmName, email: rmEmail } : {}), prefsJson: JSON.stringify(DEFAULT_PREFERENCES) } });
   }
 
   // ---------- Accounts ----------
@@ -211,7 +219,7 @@ export async function seed(db: Db, today: Date): Promise<{ accounts: number }> {
   await db.mockSfContact.createMany({ data: contacts });
 
   // ---------- Calendar (docs/07 §4) ----------
-  const maya = { name: 'Maya Chen', email: 'maya.chen@bank.example', userId: 'u_maya', external: false };
+  const maya = { name: rmName, email: rmEmail, userId: 'u_maya', external: false };
   const devonU = { name: 'Devon Brooks', email: 'devon.brooks@bank.example', userId: 'u_devon', external: false };
   const ext = (c: (typeof contacts)[number]) => ({ name: c.name, email: c.email, contactId: c.id, external: true });
   const contact = (id: string) => contacts.find((c) => c.id === id)!;
@@ -257,12 +265,12 @@ export async function seed(db: Db, today: Date): Promise<{ accounts: number }> {
   // ---------- Tasks ----------
   await db.mockSfTask.createMany({
     data: [
-      { id: '00TMockTask000001', accountId: ACCOUNT_IDS.brightwater, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: 'Maya Chen', subject: 'Send renewal documents to Ellen Ward', dueDate: iso(0), status: 'OPEN', clientCommitment: true },
-      { id: '00TMockTask000002', accountId: ACCOUNT_IDS.harbor, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: 'Maya Chen', subject: 'Send line renewal options to Ana Patel', dueDate: iso(2), status: 'OPEN', clientCommitment: true },
-      { id: '00TMockTask000003', accountId: ACCOUNT_IDS.castell, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: 'Maya Chen', subject: 'Follow up on Q2 financial statements', dueDate: iso(-1), status: 'OPEN', clientCommitment: false },
+      { id: '00TMockTask000001', accountId: ACCOUNT_IDS.brightwater, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: rmName, subject: 'Send renewal documents to Ellen Ward', dueDate: iso(0), status: 'OPEN', clientCommitment: true },
+      { id: '00TMockTask000002', accountId: ACCOUNT_IDS.harbor, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: rmName, subject: 'Send line renewal options to Ana Patel', dueDate: iso(2), status: 'OPEN', clientCommitment: true },
+      { id: '00TMockTask000003', accountId: ACCOUNT_IDS.castell, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: rmName, subject: 'Follow up on Q2 financial statements', dueDate: iso(-1), status: 'OPEN', clientCommitment: false },
       { id: '00TMockTask000004', accountId: ACCOUNT_IDS.riverline, bookRmId: 'u_maya', ownerId: 'u_priya', ownerName: 'Priya Shah', subject: 'Collect updated AR aging from Riverline', dueDate: iso(-2), status: 'OPEN', clientCommitment: false },
-      { id: '00TMockTask000005', accountId: ACCOUNT_IDS.acme, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: 'Maya Chen', subject: 'Share updated treasury fee schedule with Tom Lee', dueDate: iso(6), status: 'OPEN', clientCommitment: true },
-      { id: '00TMockTask000006', accountId: ACCOUNT_IDS.summit, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: 'Maya Chen', subject: 'Prepare treasury review deck for Owen Hart', dueDate: iso(1), status: 'OPEN', clientCommitment: false },
+      { id: '00TMockTask000005', accountId: ACCOUNT_IDS.acme, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: rmName, subject: 'Share updated treasury fee schedule with Tom Lee', dueDate: iso(6), status: 'OPEN', clientCommitment: true },
+      { id: '00TMockTask000006', accountId: ACCOUNT_IDS.summit, bookRmId: 'u_maya', ownerId: 'u_maya', ownerName: rmName, subject: 'Prepare treasury review deck for Owen Hart', dueDate: iso(1), status: 'OPEN', clientCommitment: false },
       { id: '00TMockTask000007', accountId: ACCOUNT_IDS.greenline, bookRmId: 'u_devon', ownerId: 'u_devon', ownerName: 'Devon Brooks', subject: 'Send merchant services brochure to Dr. Ortiz', dueDate: iso(1), status: 'OPEN', clientCommitment: true },
       { id: '00TMockTask000008', accountId: ACCOUNT_IDS.maple, bookRmId: 'u_devon', ownerId: 'u_devon', ownerName: 'Devon Brooks', subject: 'Call Rosa about seasonal line', dueDate: iso(-4), status: 'OPEN', clientCommitment: false },
     ],

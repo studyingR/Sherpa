@@ -16,7 +16,10 @@
     "evals": "pnpm --filter @sherpa/evals evals",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "auth:allow": "pnpm --filter @sherpa/db auth allow",
+    "auth:revoke": "pnpm --filter @sherpa/db auth revoke",
+    "auth:list": "pnpm --filter @sherpa/db auth list"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

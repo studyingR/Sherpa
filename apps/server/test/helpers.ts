@@ -29,13 +29,14 @@ export function testDb(): Db {
   return sharedDb;
 }
 
-export async function setup(opts: { flags?: Partial<FlagConfig>; now?: Date } = {}) {
+export async function setup(opts: { flags?: Partial<FlagConfig>; now?: Date; env?: Record<string, string> } = {}) {
   const db = testDb();
   await seed(db, TODAY);
   const clock = manualClock(opts.now ?? NOW);
   const config = loadConfig({
     NODE_ENV: 'test', LLM_MODE: 'mock', VOICE_MODE: 'mock', INTEGRATIONS_MODE: 'mock', SCHEDULER: 'off', LOG_LEVEL: 'silent',
     JWT_SECRET: 'test-secret-123', FEATURE_FLAGS_FILE: './config/features.json', REFERRAL_ROUTING_FILE: './config/referral-routing.json',
+    ...opts.env,
   });
   const { app, deps, services } = await buildApp({ config, db, clock, flags: opts.flags ?? DEFAULT_FLAGS, logger: createLogger('silent') });
   await primeAlerts(deps, services);

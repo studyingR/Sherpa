@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { View } from 'react-native';
 import { API } from '@/api/hooks';
 import { clearCache } from '@/api/client';
+import { signOutOfSupabase } from '@/lib/supabase';
 import { Text } from '@/components/Text';
 import { Badge, Button, Card, ListRow, Screen, SectionLabel } from '@/components/ui';
 import { useFeature, useSession } from '@/store/session';
@@ -18,6 +19,7 @@ export default function Me() {
 
   async function out() {
     await API.signOut().catch(() => undefined);
+    await signOutOfSupabase();
     await clearCache();
     qc.clear();
     await signOut();

@@ -2,9 +2,10 @@ appId: host.exp.Exponent
 name: "08 Referral from Acme debrief → FX → routed queue → confirm"
 ---
 - runFlow: 02-debrief-g1.yaml
-- scrollUntilVisible: { element: "Refer to specialist" }
+- scrollUntilVisible: { element: "Refer to specialist", centerElement: true }
 - tapOn: "Refer to specialist"
 - extendedWaitUntil: { visible: "Route to FX Desk – Northeast", timeout: 10000 }
 - tapOn: "The client agreed to be contacted by a specialist"
-- tapOn: "Route to FX Desk – Northeast"
-- extendedWaitUntil: { visible: "Referral to FX Desk – Northeast", timeout: 10000 }
+# The routing card above the button carries the same text; index 1 is the button.
+- tapOn: { text: "Route to FX Desk – Northeast", index: 1 }
+- extendedWaitUntil: { visible: ".*Referral to FX Desk – Northeast.*", timeout: 10000 }

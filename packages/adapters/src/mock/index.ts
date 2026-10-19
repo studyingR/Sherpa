@@ -23,7 +23,7 @@ export interface MockDeps {
 const PERSONA_DESCRIPTIONS: Record<string, string> = {
   u_maya: 'Commercial RM · 8 middle-market relationships',
   u_devon: 'Small Business RM · 45 relationships',
-  u_priya: 'RM Analyst · supports Maya',
+  u_priya: 'RM Analyst · supports the commercial RM',
   u_sam: 'Market leader · NJ Central team',
   u_jordan: 'Compliance reviewer',
 };

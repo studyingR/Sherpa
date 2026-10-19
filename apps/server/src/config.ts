@@ -6,6 +6,11 @@ const Env = z
     PORT: z.coerce.number().int().default(4000),
     HOST: z.string().default('0.0.0.0'),
     JWT_SECRET: z.string().min(8).default('dev-only-change-me'),
+    /** personas: dev persona picker; supabase: Google sign-in via Supabase Auth; both: dev convenience. */
+    AUTH_MODE: z.enum(['personas', 'supabase', 'both']).default('personas'),
+    SUPABASE_URL: z.string().url().optional(),
+    /** Only for projects still on the legacy shared JWT secret; otherwise the project's JWKS is used. */
+    SUPABASE_JWT_SECRET: z.string().optional(),
     DATABASE_URL: z.string().default('file:./dev.db'),
     SEED_TODAY: z.string().optional(),
     FEATURE_FLAGS_FILE: z.string().default('./config/features.json'),
@@ -37,6 +42,15 @@ const Env = z
       for (const k of ['OPENAI_TRANSCRIBE_MODEL', 'OPENAI_TTS_MODEL', 'OPENAI_TTS_VOICE'] as const) {
         if (!e[k]) ctx.addIssue({ code: 'custom', path: [k], message: 'required when VOICE_MODE=openai' });
       }
+    }
+    if (e.AUTH_MODE !== 'personas' && !e.SUPABASE_URL) {
+      ctx.addIssue({ code: 'custom', path: ['SUPABASE_URL'], message: 'required when AUTH_MODE uses supabase' });
+    }
+    if (e.NODE_ENV === 'production' && e.AUTH_MODE !== 'supabase') {
+      ctx.addIssue({ code: 'custom', path: ['AUTH_MODE'], message: 'must be supabase in production (persona sign-in is dev only)' });
+    }
+    if (e.NODE_ENV === 'production' && e.JWT_SECRET === 'dev-only-change-me') {
+      ctx.addIssue({ code: 'custom', path: ['JWT_SECRET'], message: 'set a real secret in production' });
     }
     if (e.VOICE_PIPELINE === 'realtime' && !e.OPENAI_REALTIME_MODEL) {
       ctx.addIssue({ code: 'custom', path: ['OPENAI_REALTIME_MODEL'], message: 'required when VOICE_PIPELINE=realtime' });

@@ -3,12 +3,17 @@ name: "13 With F11–F13 on (test config): health band, pricing disclaimer"
 # Requires config/features.json with F11–F13 enabled and approved, then a server restart.
 ---
 - runFlow: ../subflows/sign-in-maya.yaml
-- assertVisible: "At-risk relationships"
+- scrollUntilVisible: { element: "At-risk relationships", centerElement: true }
 - tapOn: "Accounts"
 - tapOn: "Acme Manufacturing.*"
+# Insights is the last tab in a horizontal row; swipe the row to reveal it.
+- swipe: { from: { text: "Deposits" }, direction: LEFT }
 - tapOn: "Insights"
-- assertVisible: "Relationship health"
+- scrollUntilVisible: { element: "Relationship health", centerElement: true }
+- scrollUntilVisible: { element: "New deal", direction: UP }
 - tapOn: "New deal"
 - tapOn: "Send: They need a 2.5 million equipment loan.*"
-- tapOn: "Pricing guidance (internal)"
+- extendedWaitUntil: { visible: ".*Is that right\\?", timeout: 15000 }
+- scrollUntilVisible: { element: "Pricing guidance \\(internal\\).*", centerElement: true }
+- tapOn: "Pricing guidance \\(internal\\).*"
 - assertVisible: "Indicative internal guidance. Not a quote.*"

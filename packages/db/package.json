@@ -11,7 +11,8 @@
     "seed": "node scripts/with-env.mjs tsx src/seed-cli.ts",
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint src",
-    "test": "node scripts/with-env.mjs vitest run --passWithNoTests"
+    "test": "node scripts/with-env.mjs vitest run --passWithNoTests",
+    "auth": "node scripts/with-env.mjs tsx src/allow-cli.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

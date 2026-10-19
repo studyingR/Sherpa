@@ -30,6 +30,7 @@ Claude Code: record any decision the spec left open here, newest first.
 | 2026-10-18 | Live listening keeps segment text in server memory and only writes it to the transcript after the RM confirms the resulting debrief | F11-FR3 | 01 F11 |
 | 2026-10-18 | Push notifications use Expo push when a token exists (dev builds/devices); Expo Go on the simulator falls back to the in-app notification center | Expo Go no longer supports remote push | 01 §3 |
 | 2026-10-18 | Monorepo uses pnpm `nodeLinker: hoisted` and every workspace package is `"type": "module"` with TypeScript sources consumed directly (no build step) | Expo/Metro and tsx both resolve TS sources; hoisting avoids RN duplicate-module issues | CLAUDE.md stack |
+| 2026-10-18 | Maestro E2E: each flow signs in from a clean session (stop Expo Go, clear simulator keychain); run `pnpm db:reset` and then (re)start the server before each mutating flow, since alerts are evaluated at server boot. Flow 13 needs F11–F13 enabled and approved in `config/features.json` plus a server restart | Flows are independent and deterministic in mock mode | 10 §2 |
 | (spec) | All 13 features in scope; F11–F13 behind compliance flags, default off | Regulatory gating | 01 §4, 08 §4 |
 | (spec) | OpenAI API via user key, behind `LlmProvider`/`VoiceProvider`; mock default | Build without keys; swap to enterprise gateway later | 05 §2 |
 | (spec) | Integrations mocked behind real interfaces | Plug in live systems in M9 | 02 §3 |

@@ -2,10 +2,27 @@ appId: host.exp.Exponent
 name: "12 With F11–F13 off: no Live, Pricing or Health UI anywhere"
 ---
 - runFlow: ../subflows/sign-in-maya.yaml
+# At-risk relationships would be the last section on Today; scroll to the end first.
+- repeat:
+    times: 6
+    commands:
+      - scroll
 - assertNotVisible: "At-risk relationships"
 - tapOn: "Accounts"
 - tapOn: "Acme Manufacturing.*"
+# Insights is the last tab in a horizontal row; swipe the row to reveal it.
+- swipe: { from: { text: "Deposits" }, direction: LEFT }
 - tapOn: "Insights"
+# The health card would follow the talking points; scroll to the end first.
+- repeat:
+    times: 4
+    commands:
+      - scroll
 - assertNotVisible: "Relationship health"
+- scrollUntilVisible: { element: "New deal", direction: UP }
 - tapOn: "New deal"
-- assertNotVisible: "Pricing guidance (internal)"
+- tapOn: "Send: They need a 2.5 million equipment loan.*"
+- extendedWaitUntil: { visible: ".*Is that right\\?", timeout: 15000 }
+# Pricing guidance would sit just above "Create draft in nCino" in the deal card.
+- scrollUntilVisible: { element: "Create draft in nCino", centerElement: true }
+- assertNotVisible: "Pricing guidance \\(internal\\).*"

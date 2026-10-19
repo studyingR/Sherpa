@@ -2,7 +2,8 @@ appId: host.exp.Exponent
 name: "10 Documents for Castell → draft request"
 ---
 - runFlow: ../subflows/sign-in-maya.yaml
-- scrollUntilVisible: { element: "Castell Foods: Financial statements \\(Q2\\)" }
+- scrollUntilVisible: { element: "Castell Foods: Financial statements \\(Q2\\).*", centerElement: true }
 - tapOn: "Castell Foods: Financial statements \\(Q2\\).*"
 - tapOn: "Draft request email"
 - extendedWaitUntil: { visible: ".*Financial statements \\(Q2\\).*", timeout: 10000 }
+- assertVisible: "Save to Outlook drafts"

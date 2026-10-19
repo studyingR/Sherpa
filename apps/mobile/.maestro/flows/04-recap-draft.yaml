@@ -2,9 +2,15 @@ appId: host.exp.Exponent
 name: "04 Saved → Draft recap → guard passes → Save to Outlook drafts → not sent"
 ---
 - runFlow: 02-debrief-g1.yaml
-- scrollUntilVisible: { element: "Draft recap email to Jane" }
+- scrollUntilVisible: { element: "Draft recap email to Jane", centerElement: true }
 - tapOn: "Draft recap email to Jane"
 - extendedWaitUntil: { visible: "Commitment check passed", timeout: 15000 }
-- scrollUntilVisible: { element: "Save to Outlook drafts" }
+# Swipe in the right gutter: a swipe that starts on the message field focuses it
+# and the keyboard then covers the Save button.
+- repeat:
+    while: { notVisible: "Save to Outlook drafts" }
+    times: 5
+    commands:
+      - swipe: { start: "98%, 75%", end: "98%, 25%" }
 - tapOn: "Save to Outlook drafts"
 - extendedWaitUntil: { visible: "In your Outlook drafts · not sent", timeout: 15000 }
