@@ -35,3 +35,10 @@ Claude Code: record any decision the spec left open here, newest first.
 | (spec) | OpenAI API via user key, behind `LlmProvider`/`VoiceProvider`; mock default | Build without keys; swap to enterprise gateway later | 05 §2 |
 | (spec) | Integrations mocked behind real interfaces | Plug in live systems in M9 | 02 §3 |
 | (spec) | React Native + Expo, Node/Fastify, Prisma | One codebase, fast iteration | CLAUDE.md |
+
+## Profile switching for Google accounts
+
+- A Google allowlist entry (`AuthIdentity`) can be granted extra Sherpa profiles with `pnpm auth:roles <email> <ids | * | none>`; the account's own mapped user is always included.
+- Switching (`POST /v1/auth/switch`) ends the current session and starts a full session as the target user, so entitlements stay those of the signed-in user (rule 4) — there is no blended view. The Google email is kept on the session so the user can switch back.
+- Every switch writes an `auth.switch` audit event (user = new profile, target = previous profile).
+- `PROFILE_SWITCH=on|off`; default on outside production and off in production unless set explicitly. Intended for demos and pilot testers, not for RMs acting on each other's books.

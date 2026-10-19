@@ -29,6 +29,8 @@ model Session {
   id        String   @id
   userId    String
   channel   String
+  /// Google account that opened this session (null for dev persona sign-in); used for profile switching.
+  identityEmail String?
   createdAt DateTime @default(now())
   expiresAt DateTime
 }
@@ -615,6 +617,8 @@ model AuthIdentity {
   email     String   @id
   userId    String
   provider  String   @default("google")
+  /// Other Sherpa users this account may switch to: comma-separated ids, or "*" for every profile. Admin-granted.
+  switchableUserIds String @default("")
   createdAt DateTime @default(now())
   lastLoginAt DateTime?
 }

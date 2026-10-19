@@ -52,11 +52,13 @@ export async function registerRoutes(app: FastifyInstance, d: Deps, s: Services)
   const personasAllowed = d.config.AUTH_MODE !== 'supabase' && d.config.NODE_ENV !== 'production';
   const verifySupabase = createSupabaseVerifier(d.config);
 
-  async function issueSession(userId: string) {
+  const profileSwitchOn = d.config.PROFILE_SWITCH ? d.config.PROFILE_SWITCH === 'on' : d.config.NODE_ENV !== 'production';
+
+  async function issueSession(userId: string, identityEmail?: string) {
     const user = await d.adapters.identity.getUser(userId);
     if (!user) throw new AppError('UNAUTHENTICATED', "That Sherpa account doesn't exist.");
     const sid = randomUUID();
-    await d.db.session.create({ data: { id: sid, userId: user.id, channel: 'APP', createdAt: new Date(), expiresAt: new Date(Date.now() + SESSION_HOURS * 3600_000) } });
+    await d.db.session.create({ data: { id: sid, userId: user.id, identityEmail: identityEmail ?? null, channel: 'APP', createdAt: new Date(), expiresAt: new Date(Date.now() + SESSION_HOURS * 3600_000) } });
     const token = app.jwt.sign({ sub: user.id, sid }, { expiresIn: `${SESSION_HOURS}h` });
     return { token, user };
   }
@@ -91,7 +93,34 @@ export async function registerRoutes(app: FastifyInstance, d: Deps, s: Services)
     }
     await d.db.authIdentity.update({ where: { email: identity.email }, data: { lastLoginAt: new Date() } });
     await d.audit.record({ userId: allowed.userId, action: 'auth.signin.google', system: 'SHERPA', object: 'Session', requestId: req.id, at: d.clock.now() });
-    return issueSession(allowed.userId);
+    return issueSession(allowed.userId, identity.email);
+  });
+  /** The Google account behind the current session and the profiles it may use (its own plus admin-granted ones). */
+  async function switchScope(req: FastifyRequest) {
+    const sid = app.jwt.decode<{ sid: string }>(req.headers.authorization!.slice(7))?.sid;
+    const session = sid ? await d.db.session.findUnique({ where: { id: sid } }) : null;
+    const identity = session?.identityEmail ? await d.db.authIdentity.findUnique({ where: { email: session.identityEmail } }) : null;
+    if (!profileSwitchOn || !session || !identity) return null;
+    const granted = identity.switchableUserIds.split(',').map((x) => x.trim()).filter(Boolean);
+    const personas = await d.adapters.identity.listPersonas();
+    const profiles = personas.filter((p) => p.id === identity.userId || granted.includes('*') || granted.includes(p.id));
+    return { session, identity, profiles };
+  }
+
+  /** Profiles this Google account can switch between; empty when switching isn't granted. */
+  app.get('/v1/auth/profiles', auth, async (req) => {
+    const scope = await switchScope(req);
+    return scope && scope.profiles.length > 1 ? scope.profiles : [];
+  });
+
+  /** Switch to another granted profile: ends this session and starts one as that user, under the same Google account. */
+  app.post('/v1/auth/switch', auth, async (req) => {
+    const { userId } = parse(z.object({ userId: z.string().min(1) }), req.body);
+    const scope = await switchScope(req);
+    if (!scope || !scope.profiles.some((p) => p.id === userId)) throw forbidden("You can't switch to that profile.");
+    await d.db.session.deleteMany({ where: { id: scope.session.id } });
+    await d.audit.record({ userId, action: 'auth.switch', system: 'SHERPA', object: 'Session', targetId: req.ctx.user.id, requestId: req.id, at: d.clock.now() });
+    return issueSession(userId, scope.identity.email);
   });
   app.post('/v1/auth/sign-out', auth, async (req) => {
     const header = req.headers.authorization!.slice(7);

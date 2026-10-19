@@ -1,18 +1,23 @@
+import { useState } from 'react';
 import { router } from 'expo-router';
-import { useQueryClient } from '@tanstack/react-query';
-import { View } from 'react-native';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ActivityIndicator, View } from 'react-native';
 import { API } from '@/api/hooks';
 import { clearCache } from '@/api/client';
 import { signOutOfSupabase } from '@/lib/supabase';
 import { Text } from '@/components/Text';
-import { Badge, Button, Card, ListRow, Screen, SectionLabel } from '@/components/ui';
+import { Badge, Button, Card, ErrorState, ListRow, Screen, SectionLabel } from '@/components/ui';
 import { useFeature, useSession } from '@/store/session';
-import { space } from '@/theme/tokens';
+import { space, useColors } from '@/theme/tokens';
 
 export default function Me() {
-  const { user, signOut } = useSession();
+  const { user, signIn, signOut } = useSession();
   const qc = useQueryClient();
+  const c = useColors();
   const coverageOn = useFeature('F10_COVERAGE');
+  const profiles = useQuery({ queryKey: ['profiles', user?.id], queryFn: API.profiles, enabled: Boolean(user) });
+  const [switching, setSwitching] = useState<string | null>(null);
+  const [switchError, setSwitchError] = useState<string | null>(null);
   if (!user) return null;
   const isLeader = user.role === 'LEADER';
   const isCompliance = user.role === 'COMPLIANCE';
@@ -23,6 +28,23 @@ export default function Me() {
     await clearCache();
     qc.clear();
     await signOut();
+  }
+
+  /** Swap to another granted profile: new session, fresh caches, back to Today. */
+  async function switchTo(id: string) {
+    setSwitching(id);
+    setSwitchError(null);
+    try {
+      const r = await API.switchProfile(id);
+      await clearCache();
+      qc.clear();
+      await signIn(r.token, r.user);
+      router.replace('/');
+    } catch {
+      setSwitchError("Couldn't switch profiles. Try again.");
+    } finally {
+      setSwitching(null);
+    }
   }
 
   return (
@@ -43,6 +65,29 @@ export default function Me() {
         <ListRow title="Notifications" subtitle="Everything Sherpa sent you" onPress={() => router.push('/notifications')} />
         <ListRow title="Settings" subtitle="Nudges, quiet hours, privacy, voice" onPress={() => router.push('/settings')} last />
       </Card>
+
+      {(profiles.data?.length ?? 0) > 1 ? (
+        <>
+          <SectionLabel>Switch profile</SectionLabel>
+          {switchError ? <ErrorState message={switchError} /> : null}
+          <Card padded={false}>
+            {profiles.data!.map((p, i, arr) => {
+              const current = p.id === user.id;
+              return (
+                <ListRow
+                  key={p.id}
+                  title={p.name}
+                  subtitle={p.description}
+                  last={i === arr.length - 1}
+                  accessibilityLabel={current ? `${p.name}, current profile` : `Switch to ${p.name}, ${p.description}`}
+                  right={current ? <Badge label="Current" tone="primary" /> : switching === p.id ? <ActivityIndicator color={c.primary} /> : null}
+                  onPress={current || switching ? undefined : () => void switchTo(p.id)}
+                />
+              );
+            })}
+          </Card>
+        </>
+      ) : null}
 
       <Card tone="soft" style={{ gap: space.xs }}>
         <Text variant="smallStrong" tone="successInk">Synthetic data only</Text>

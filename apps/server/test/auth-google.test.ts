@@ -59,3 +59,53 @@ describe('Google sign-in via Supabase', () => {
     expect(() => loadConfig({ NODE_ENV: 'production', AUTH_MODE: 'supabase', SUPABASE_URL })).toThrow(/JWT_SECRET/);
   });
 });
+
+describe('Profile switching for a Google account', () => {
+  async function googleSession(email = 'rm.tester@example.com') {
+    const r = await h.app.inject({ method: 'POST', url: '/v1/auth/supabase', payload: { accessToken: await supabaseToken(email) } });
+    return r.json().token as string;
+  }
+
+  it('lists nothing and refuses a switch when no extra profiles are granted', async () => {
+    await h.db.authIdentity.update({ where: { email: 'rm.tester@example.com' }, data: { switchableUserIds: '' } });
+    const token = await googleSession();
+    expect((await h.as(token).get('/v1/auth/profiles')).json()).toEqual([]);
+    expect((await h.as(token).post('/v1/auth/switch', { userId: 'u_sam' })).statusCode).toBe(403);
+  });
+
+  it('switches only to granted profiles, ends the old session and audits the switch', async () => {
+    await h.db.authIdentity.update({ where: { email: 'rm.tester@example.com' }, data: { switchableUserIds: 'u_sam' } });
+    const token = await googleSession();
+    expect((await h.as(token).get('/v1/auth/profiles')).json().map((p: { id: string }) => p.id)).toEqual(['u_maya', 'u_sam']);
+    expect((await h.as(token).post('/v1/auth/switch', { userId: 'u_devon' })).statusCode).toBe(403);
+
+    const r = await h.as(token).post('/v1/auth/switch', { userId: 'u_sam' });
+    expect(r.statusCode).toBe(200);
+    const sam = r.json();
+    expect(sam.user.role).toBe('LEADER');
+    expect((await h.as(token).get('/v1/me')).statusCode).toBe(401);
+    expect((await h.as(sam.token).get('/v1/me')).json().id).toBe('u_sam');
+    expect(await h.db.auditEvent.count({ where: { action: 'auth.switch', userId: 'u_sam', targetId: 'u_maya' } })).toBe(1);
+
+    // The new session keeps the Google account, so it can switch back to the home profile.
+    const back = await h.as(sam.token).post('/v1/auth/switch', { userId: 'u_maya' });
+    expect(back.json().user.id).toBe('u_maya');
+  });
+
+  it('"*" grants every profile', async () => {
+    await h.db.authIdentity.update({ where: { email: 'rm.tester@example.com' }, data: { switchableUserIds: '*' } });
+    const token = await googleSession();
+    expect((await h.as(token).get('/v1/auth/profiles')).json()).toHaveLength(5);
+  });
+
+  it('PROFILE_SWITCH=off disables switching even when granted', async () => {
+    const off = await setup({ env: { AUTH_MODE: 'supabase', SUPABASE_URL, SUPABASE_JWT_SECRET: SECRET, PROFILE_SWITCH: 'off' } });
+    await off.db.authIdentity.deleteMany();
+    await off.db.authIdentity.create({ data: { email: 'rm.tester@example.com', userId: 'u_maya', switchableUserIds: '*' } });
+    const r = await off.app.inject({ method: 'POST', url: '/v1/auth/supabase', payload: { accessToken: await supabaseToken('rm.tester@example.com') } });
+    const token = r.json().token as string;
+    expect((await off.as(token).get('/v1/auth/profiles')).json()).toEqual([]);
+    expect((await off.as(token).post('/v1/auth/switch', { userId: 'u_sam' })).statusCode).toBe(403);
+    await off.app.close();
+  });
+});

@@ -11,6 +11,8 @@ const Env = z
     SUPABASE_URL: z.string().url().optional(),
     /** Only for projects still on the legacy shared JWT secret; otherwise the project's JWKS is used. */
     SUPABASE_JWT_SECRET: z.string().optional(),
+    /** Lets a Google account switch to the extra profiles an admin granted it. Default: on outside production. */
+    PROFILE_SWITCH: z.enum(['on', 'off']).optional(),
     DATABASE_URL: z.string().default('file:./dev.db'),
     SEED_TODAY: z.string().optional(),
     FEATURE_FLAGS_FILE: z.string().default('./config/features.json'),

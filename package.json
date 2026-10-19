@@ -19,6 +19,7 @@
     "format": "prettier --write .",
     "auth:allow": "pnpm --filter @sherpa/db auth allow",
     "auth:revoke": "pnpm --filter @sherpa/db auth revoke",
+    "auth:roles": "pnpm --filter @sherpa/db auth roles",
     "auth:list": "pnpm --filter @sherpa/db auth list"
   },
   "devDependencies": {
