@@ -1,0 +1,43 @@
+{
+  "id": "G17",
+  "title": "FX and capital markets",
+  "ctx": {
+    "accountName": "Riverline Plastics",
+    "meetingSubject": "Riverline relationship meeting",
+    "attendees": [
+      {
+        "name": "Gus Volkov",
+        "role": "President",
+        "external": true,
+        "contactId": "003Mock00000GusVo1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "They import resin from Germany and want to hedge the euro exposure, and they asked about an interest rate swap. I'll loop in the FX desk by Wednesday."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "specialistInterest": [
+      "FX",
+      "CAPITAL_MARKETS"
+    ],
+    "nextSteps": [
+      {
+        "title": "Loop in the FX desk",
+        "owner": "RM",
+        "dueDate": "2026-10-21",
+        "clientCommitment": false
+      },
+      {
+        "title": "Introduce Capital Markets specialist",
+        "owner": "RM",
+        "dueDate": null,
+        "clientCommitment": false,
+        "optional": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "id": "G12",
+  "title": "Two opportunities",
+  "ctx": {
+    "accountName": "Acme Manufacturing",
+    "meetingSubject": "Acme Manufacturing annual review",
+    "attendees": [
+      {
+        "name": "Jane Ruiz",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000JaneR1"
+      },
+      {
+        "name": "Tom Lee",
+        "role": "Controller",
+        "external": true,
+        "contactId": "003Mock00000TomLe1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "They need a new two million line of credit by Q2 and a one point two million term loan for the warehouse in Q3. I'll send both term sheets by October 30."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "opportunities": [
+      {
+        "product": "Line of credit",
+        "amount": 2000000,
+        "closeQuarter": "Q2 2027"
+      },
+      {
+        "product": "Term loan",
+        "amount": 1200000,
+        "closeQuarter": "Q3 2027"
+      }
+    ],
+    "nextSteps": [
+      {
+        "title": "Send both term sheets",
+        "owner": "RM",
+        "dueDate": "2026-10-30",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

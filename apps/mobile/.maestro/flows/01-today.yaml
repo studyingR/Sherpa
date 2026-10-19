@@ -1,0 +1,7 @@
+appId: host.exp.Exponent
+name: "01 Sign in as Maya → Today shows Acme pending debrief"
+---
+- runFlow: ../subflows/sign-in-maya.yaml
+- assertVisible: "Debrief pending"
+- assertVisible: "Acme Manufacturing"
+- assertVisible: "Send renewal documents to Ellen Ward.*"

@@ -1,0 +1,624 @@
+// Sherpa database. SQLite in dev/test, Postgres in prod (change `provider`; JSON is stored as String
+// so the schema works on both — see docs/03 §2 and docs/DECISIONS.md).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================ Sherpa tables ============================
+
+model User {
+  id        String  @id
+  name      String
+  email     String  @unique
+  role      String
+  segment   String?
+  region    String?
+  teamId    String?
+  pushToken String?
+  prefsJson String  @default("{}")
+  pinHash   String?
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  channel   String
+  /// Google account that opened this session (null for dev persona sign-in); used for profile switching.
+  identityEmail String?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+model VoiceSession {
+  id        String    @id
+  userId    String
+  mode      String
+  channel   String    @default("APP")
+  state     String
+  accountId String?
+  meetingId String?
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+}
+
+model TranscriptSegment {
+  id             String   @id
+  voiceSessionId String
+  speaker        String
+  text           String
+  kind           String?
+  startedAt      DateTime @default(now())
+  final          Boolean  @default(true)
+
+  @@index([voiceSessionId])
+}
+
+model DebriefDraft {
+  id             String   @id
+  voiceSessionId String
+  userId         String
+  accountId      String
+  meetingId      String?
+  status         String
+  draftJson      String
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId, status])
+}
+
+model Debrief {
+  id            String   @id
+  draftId       String   @unique
+  userId        String
+  accountId     String
+  salesforceId  String
+  transcriptRef String
+  confirmedAt   DateTime
+  modelVersion  String
+  resultJson    String
+  channel       String
+}
+
+model WriteIntent {
+  id                    String   @id
+  userId                String
+  kind                  String
+  payloadJson           String
+  approvalsRequiredJson String
+  plannedJson           String
+  summary               String
+  status                String
+  createdAt             DateTime @default(now())
+  expiresAt             DateTime
+  resultJson            String?
+}
+
+// Append-only (C-18): no update/delete code paths exist; see audit service.
+model AuditEvent {
+  id               String   @id
+  at               DateTime @default(now())
+  userId           String
+  action           String
+  targetSystem     String
+  targetObject     String
+  targetId         String?
+  accountId        String?
+  intentId         String?
+  confirmationJson String?
+  beforeJson       String?
+  afterJson        String?
+  requestId        String
+
+  @@index([accountId])
+  @@index([userId])
+}
+
+model FollowUpDraft {
+  id              String   @id
+  debriefId       String?
+  accountId       String
+  userId          String
+  kind            String
+  team            String?
+  toJson          String
+  ccJson          String   @default("[]")
+  subject         String
+  body            String
+  originalBody    String
+  guardResultJson String
+  editedBody      String?
+  mailDraftId     String?
+  status          String
+  reminderJson    String?
+  createdAt       DateTime @default(now())
+}
+
+model Alert {
+  id              String    @id
+  rmId            String
+  accountId       String
+  facilityId      String
+  rule            String
+  severity        String
+  title           String
+  evidenceJson    String
+  suggestedAction String
+  status          String
+  snoozeUntil     DateTime?
+  dedupeKey       String
+  dismissReason   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([rmId, status])
+  @@index([dedupeKey])
+}
+
+model Referral {
+  id           String   @id
+  userId       String
+  accountId    String
+  contactId    String?
+  specialty    String
+  needSummary  String
+  urgency      String
+  queue        String
+  routedUserId String?
+  status       String
+  consent      Boolean
+  salesforceId String?
+  debriefId    String?
+  createdAt    DateTime @default(now())
+}
+
+model DealDraft {
+  id             String   @id
+  userId         String
+  accountId      String
+  voiceSessionId String?
+  draftJson      String
+  status         String
+  updatedAt      DateTime @updatedAt
+}
+
+model DocumentRequest {
+  id                   String   @id
+  userId               String
+  accountId            String
+  itemsJson            String
+  followUpDraftId      String?
+  mailDraftId          String?
+  reminderScheduleJson String   @default("[]")
+  createdAt            DateTime @default(now())
+}
+
+model TalkingPointFeedback {
+  id        String   @id
+  userId    String
+  accountId String
+  ruleId    String
+  feedback  String
+  at        DateTime @default(now())
+
+  @@unique([userId, accountId, ruleId])
+}
+
+model CoveragePlan {
+  id        String @id
+  userId    String
+  weekOf    String
+  itemsJson String
+
+  @@unique([userId, weekOf])
+}
+
+model HealthScoreSnapshot {
+  id          String   @id
+  accountId   String
+  score       Int
+  band        String
+  driversJson String
+  computedAt  DateTime
+
+  @@index([accountId])
+}
+
+model ConsentRecord {
+  id               String   @id
+  userId           String
+  meetingId        String
+  jurisdiction     String
+  allPartyRequired Boolean
+  statement        String
+  confirmedAt      DateTime @default(now())
+}
+
+model PricingView {
+  id         String   @id
+  userId     String
+  dealId     String
+  inputsJson String
+  outputJson String
+  at         DateTime @default(now())
+}
+
+model Notification {
+  id               String    @id
+  userId           String
+  type             String
+  title            String
+  body             String
+  deepLink         String?
+  dedupeKey        String?
+  createdAt        DateTime  @default(now())
+  sentAt           DateTime?
+  suppressedReason String?
+  readAt           DateTime?
+
+  @@index([userId, createdAt])
+}
+
+model CachedBrief {
+  key       String   @id
+  briefJson String
+  expiresAt DateTime
+}
+
+model ComplianceItem {
+  id           String    @id
+  type         String
+  accountId    String
+  rmId         String
+  excerpt      String
+  debriefId    String?
+  caseId       String?
+  status       String
+  resolverNote String?
+  resolvedBy   String?
+  resolvedAt   DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+model ScheduledJobRun {
+  id     String   @id
+  job    String
+  key    String   @unique
+  ranAt  DateTime @default(now())
+}
+
+// ============================ Mock external systems ============================
+
+model MockSfAccount {
+  id                String @id
+  name              String
+  city              String
+  state             String
+  segment           String
+  tier              String
+  ownerRmId         String
+  industry          String
+  revenueBand       String
+  relationshipSince String
+  profileJson       String @default("{}")
+
+  @@map("mock_sf_account")
+}
+
+model MockSfContact {
+  id        String  @id
+  accountId String
+  name      String
+  title     String
+  email     String
+  phone     String?
+  isPrimary Boolean @default(false)
+
+  @@index([accountId])
+  @@map("mock_sf_contact")
+}
+
+model MockSfEvent {
+  id            String   @id
+  accountId     String?
+  ownerRmId     String
+  subject       String
+  start         DateTime
+  end           DateTime
+  location      String?
+  type          String
+  attendeesJson String
+  description   String?
+  debriefId     String?
+
+  @@index([ownerRmId, start])
+  @@map("mock_sf_event")
+}
+
+model MockSfActivity {
+  id        String   @id
+  accountId String
+  ownerRmId String
+  type      String
+  subject   String
+  date      DateTime
+
+  @@index([accountId, date])
+  @@map("mock_sf_activity")
+}
+
+model MockSfTask {
+  id               String    @id
+  accountId        String?
+  bookRmId         String
+  ownerId          String?
+  ownerName        String
+  subject          String
+  dueDate          String?
+  status           String
+  clientCommitment Boolean   @default(false)
+  debriefId        String?
+  whatId           String?
+  createdAt        DateTime  @default(now())
+  completedAt      DateTime?
+
+  @@index([bookRmId, status])
+  @@map("mock_sf_task")
+}
+
+model MockSfOpportunity {
+  id         String   @id
+  accountId  String
+  name       String
+  amount     Float?
+  stage      String
+  closeDate  String?
+  leadSource String?
+  product    String?
+  createdAt  DateTime @default(now())
+
+  @@map("mock_sf_opportunity")
+}
+
+model MockSfCase {
+  id          String   @id
+  accountId   String
+  contactId   String?
+  recordType  String
+  subject     String
+  description String
+  origin      String
+  queue       String
+  status      String   @default("New")
+  createdAt   DateTime @default(now())
+
+  @@map("mock_sf_case")
+}
+
+model MockSfDebrief {
+  id         String   @id
+  accountId  String
+  fieldsJson String
+  createdAt  DateTime @default(now())
+
+  @@map("mock_sf_debrief")
+}
+
+model MockSfDebriefAttendee {
+  id        String  @id
+  debriefId String
+  contactId String?
+  userId    String?
+  name      String
+  role      String?
+
+  @@map("mock_sf_debrief_attendee")
+}
+
+model MockSfReferral {
+  id         String   @id
+  accountId  String
+  fieldsJson String
+  status     String
+  createdAt  DateTime @default(now())
+
+  @@map("mock_sf_referral")
+}
+
+model MockNcinoLoan {
+  id              String    @id
+  accountId       String
+  product         String
+  commitment      Float
+  outstanding     Float
+  riskRating      Int
+  prevRiskRating  Int?
+  ratingChangedAt DateTime?
+  maturityDate    String
+  renewalOppOpen  Boolean   @default(false)
+
+  @@index([accountId])
+  @@map("mock_ncino_loan")
+}
+
+model MockNcinoCovenant {
+  id          String @id
+  accountId   String
+  loanId      String
+  name        String
+  metric      String
+  operator    String
+  threshold   Float
+  testDueDate String
+
+  @@map("mock_ncino_covenant")
+}
+
+model MockNcinoTickler {
+  id              String    @id
+  accountId       String
+  type            String
+  period          String?
+  dueDate         String
+  lastRequestedAt DateTime?
+  status          String
+
+  @@index([accountId])
+  @@map("mock_ncino_tickler")
+}
+
+model MockNcinoDraftRequest {
+  id          String   @id
+  accountId   String
+  payloadJson String
+  status      String
+  createdAt   DateTime @default(now())
+
+  @@map("mock_ncino_draft_request")
+}
+
+model MockNcinoSpread {
+  id        String @id
+  accountId String
+  period    String
+  dscr      Float
+  leverage  Float
+  asOf      String
+
+  @@map("mock_ncino_spread")
+}
+
+model MockAcbsBalanceHistory {
+  id          String @id
+  accountId   String
+  facilityId  String
+  date        String
+  outstanding Float
+  commitment  Float
+
+  @@index([facilityId, date])
+  @@map("mock_acbs_balance_history")
+}
+
+model MockDepositBalanceHistory {
+  id        String @id
+  accountId String
+  date      String
+  balance   Float
+
+  @@index([accountId, date])
+  @@map("mock_deposit_balance_history")
+}
+
+model MockDepositProduct {
+  id        String @id
+  accountId String
+  product   String
+  since     String
+
+  @@map("mock_deposit_product")
+}
+
+model MockPlProfitability {
+  accountId           String @id
+  raroc               Float
+  revenue12m          Float
+  depositSpreadCredit Float
+  asOf                String
+
+  @@map("mock_pl_profitability")
+}
+
+model MockNews {
+  id          String @id
+  accountId   String
+  headline    String
+  outlet      String
+  publishedAt String
+  summary     String
+
+  @@map("mock_news")
+}
+
+model MockKycRequirement {
+  id        String @id
+  accountId String
+  type      String
+  dueDate   String
+  status    String
+
+  @@map("mock_kyc_requirement")
+}
+
+model MockMailDraft {
+  id        String   @id
+  rmId      String
+  toJson    String
+  ccJson    String
+  subject   String
+  body      String
+  scheduledFor String?
+  createdAt DateTime @default(now())
+
+  @@map("mock_mail_draft")
+}
+
+model MockCalendarHold {
+  id        String   @id
+  rmId      String
+  accountId String?
+  title     String
+  start     DateTime
+  end       DateTime
+  createdAt DateTime @default(now())
+
+  @@map("mock_calendar_hold")
+}
+
+model MockArchive {
+  ref       String   @id
+  content   String
+  createdAt DateTime @default(now())
+
+  @@map("mock_archive")
+}
+
+model MockCallLog {
+  id       String   @id
+  adapter  String
+  method   String
+  argsJson String
+  at       DateTime @default(now())
+
+  @@index([adapter, method])
+  @@map("mock_call_log")
+}
+
+model MockSystemFailure {
+  adapter String @id
+  failing Boolean
+
+  @@map("mock_system_failure")
+}
+
+model AppMeta {
+  key   String @id
+  value String
+}
+
+/// Who may sign in with an external identity (Google via Supabase) and which Sherpa user they act as.
+/// Allowlist only: an email not listed here cannot sign in.
+model AuthIdentity {
+  email     String   @id
+  userId    String
+  provider  String   @default("google")
+  /// Other Sherpa users this account may switch to: comma-separated ids, or "*" for every profile. Admin-granted.
+  switchableUserIds String @default("")
+  createdAt DateTime @default(now())
+  lastLoginAt DateTime?
+}

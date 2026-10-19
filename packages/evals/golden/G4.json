@@ -1,0 +1,32 @@
+{
+  "id": "G4",
+  "title": "MNPI",
+  "ctx": {
+    "accountName": "Summit Ridge Builders",
+    "meetingSubject": "Summit Ridge treasury review",
+    "attendees": [
+      {
+        "name": "Owen Hart",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000OwenH1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Owen mentioned off the record they're in talks to acquire a competitor, nothing's public yet. I'll send the treasury proposal by Thursday."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": true,
+    "nextSteps": [
+      {
+        "title": "Send the treasury proposal",
+        "owner": "RM",
+        "dueDate": "2026-10-22",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

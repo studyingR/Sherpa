@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Sherpa",
+    "slug": "sherpa",
+    "scheme": "sherpa",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#F5F4EF",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.example.sherpa",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Sherpa uses the microphone to transcribe your debriefs. Audio is not stored."
+      }
+    },
+    "android": {
+      "package": "com.example.sherpa",
+      "adaptiveIcon": {
+        "backgroundColor": "#0F6E63",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "RECORD_AUDIO"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Sherpa uses the microphone to transcribe your debriefs. Audio is not stored."
+        }
+      ],
+      "expo-notifications",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "id": "G13",
+  "title": "Correction during read-back",
+  "ctx": {
+    "accountName": "Acme Manufacturing",
+    "meetingSubject": "Acme Manufacturing annual review",
+    "attendees": [
+      {
+        "name": "Jane Ruiz",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000JaneR1"
+      },
+      {
+        "name": "Tom Lee",
+        "role": "Controller",
+        "external": true,
+        "contactId": "003Mock00000TomLe1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "They need three million in equipment financing in Q1. I'll send the term sheet by Friday.",
+    "Yes.",
+    "Actually make it three and a half million.",
+    "Yes.",
+    "Confirm."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "opportunities": [
+      {
+        "product": "Equipment financing",
+        "amount": 3500000,
+        "approved": true
+      }
+    ],
+    "nextSteps": [
+      {
+        "title": "Send the equipment financing term sheet",
+        "owner": "RM",
+        "dueDate": "2026-10-23",
+        "clientCommitment": false
+      }
+    ],
+    "saved": true
+  }
+}

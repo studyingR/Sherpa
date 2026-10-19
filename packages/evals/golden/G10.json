@@ -1,0 +1,41 @@
+{
+  "id": "G10",
+  "title": "Treasury review",
+  "ctx": {
+    "accountName": "Summit Ridge Builders",
+    "meetingSubject": "Summit Ridge treasury review",
+    "attendees": [
+      {
+        "name": "Owen Hart",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000OwenH1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Owen wants positive pay and a sweep account. Treasury services will set up a demo by October 28. I promised to send the fee schedule by Wednesday."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "specialistInterest": [
+      "TREASURY_MANAGEMENT"
+    ],
+    "nextSteps": [
+      {
+        "title": "Set up a demo",
+        "owner": "Treasury Services",
+        "dueDate": "2026-10-28",
+        "clientCommitment": false
+      },
+      {
+        "title": "Send the fee schedule",
+        "owner": "RM",
+        "dueDate": "2026-10-21",
+        "clientCommitment": true
+      }
+    ]
+  }
+}

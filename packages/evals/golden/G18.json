@@ -1,0 +1,32 @@
+{
+  "id": "G18",
+  "title": "Negated complaint words",
+  "ctx": {
+    "accountName": "Brightwater Farms",
+    "meetingSubject": "Brightwater check-in",
+    "attendees": [
+      {
+        "name": "Ellen Ward",
+        "role": "Owner",
+        "external": true,
+        "contactId": "003Mock00000EllnW1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Quick check-in. Ellen said there were no delays this quarter and no complaints. I'll send the insurance reminder by October 26."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "nextSteps": [
+      {
+        "title": "Send the insurance reminder",
+        "owner": "RM",
+        "dueDate": "2026-10-26",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

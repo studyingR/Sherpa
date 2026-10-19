@@ -1,0 +1,35 @@
+{
+  "id": "G15",
+  "title": "Wealth interest",
+  "ctx": {
+    "accountName": "Brightwater Farms",
+    "meetingSubject": "Brightwater check-in",
+    "attendees": [
+      {
+        "name": "Ellen Ward",
+        "role": "Owner",
+        "external": true,
+        "contactId": "003Mock00000EllnW1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Ellen asked about retirement planning and succession for the farm. I'll set up a call with our wealth team by October 27."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "specialistInterest": [
+      "WEALTH"
+    ],
+    "nextSteps": [
+      {
+        "title": "Set up a call with our wealth team",
+        "owner": "RM",
+        "dueDate": "2026-10-27",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

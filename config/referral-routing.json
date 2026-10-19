@@ -1,0 +1,12 @@
+{
+  "defaultQueue": "Specialist Referrals – Unassigned",
+  "rules": [
+    { "specialty": "FX", "region": "NJ Central", "segment": "*", "queue": "FX Desk – Northeast", "userId": "u_carla" },
+    { "specialty": "TREASURY_MANAGEMENT", "region": "NJ Central", "segment": "COMMERCIAL", "queue": "Treasury Services – NJ", "userId": "u_omar" },
+    { "specialty": "TREASURY_MANAGEMENT", "region": "*", "segment": "SMALL_BUSINESS", "queue": "Business Banking Treasury" },
+    { "specialty": "EQUIPMENT_FINANCE", "region": "*", "segment": "*", "queue": "Equipment Finance – East", "userId": "u_lena_tm" },
+    { "specialty": "SBA", "region": "*", "segment": "*", "queue": "SBA Desk" },
+    { "specialty": "MERCHANT_SERVICES", "region": "*", "segment": "*", "queue": "Merchant Services" },
+    { "specialty": "WEALTH", "region": "NJ Central", "segment": "*", "queue": "Private Wealth – NJ" }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "G7",
+  "title": "Small business, Devon",
+  "ctx": {
+    "rm": "Devon Brooks",
+    "accountName": "Greenline Dental Group",
+    "meetingSubject": "Greenline Dental check-in",
+    "attendees": [
+      {
+        "name": "Dr. Lena Ortiz",
+        "role": "Owner",
+        "external": true,
+        "contactId": "003Mock00000LenaO1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Dr. Ortiz wants to accept card payments at the front desk and asked about an SBA loan for a second location, around four hundred thousand."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "specialistInterest": [
+      "MERCHANT_SERVICES",
+      "SBA"
+    ],
+    "opportunities": [
+      {
+        "product": "SBA loan",
+        "amount": 400000
+      }
+    ],
+    "nextSteps": [
+      {
+        "title": "Introduce Merchant Services specialist",
+        "owner": "RM",
+        "dueDate": null,
+        "clientCommitment": false,
+        "optional": true
+      }
+    ]
+  }
+}

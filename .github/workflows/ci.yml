@@ -1,0 +1,29 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      LLM_MODE: mock
+      VOICE_MODE: mock
+      INTEGRATIONS_MODE: mock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @sherpa/db generate
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - name: Evals (mock) must not regress
+        run: pnpm evals
+      - name: Expo config check
+        run: pnpm --filter @sherpa/mobile exec expo config --type public > /dev/null

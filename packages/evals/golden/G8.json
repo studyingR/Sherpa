@@ -1,0 +1,40 @@
+{
+  "id": "G8",
+  "title": "Sensitive attribute",
+  "ctx": {
+    "accountName": "Acme Manufacturing",
+    "meetingSubject": "Acme Manufacturing annual review",
+    "attendees": [
+      {
+        "name": "Jane Ruiz",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000JaneR1"
+      },
+      {
+        "name": "Tom Lee",
+        "role": "Controller",
+        "external": true,
+        "contactId": "003Mock00000TomLe1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "She mentioned she's going on medical leave for surgery next month, so loop in Tom."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "sensitive": true,
+    "summaryExcludes": "surgery",
+    "nextSteps": [
+      {
+        "title": "Loop in Tom",
+        "owner": "RM",
+        "dueDate": null,
+        "clientCommitment": false
+      }
+    ]
+  }
+}

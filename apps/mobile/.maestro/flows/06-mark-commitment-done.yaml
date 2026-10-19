@@ -1,0 +1,9 @@
+appId: host.exp.Exponent
+name: "06 Today → mark Brightwater commitment done → confirm → gone"
+---
+- runFlow: ../subflows/sign-in-maya.yaml
+- tapOn: "Send renewal documents to Ellen Ward.*"
+- tapOn: "Mark done"
+- extendedWaitUntil: { visible: "What will be written", timeout: 10000 }
+- tapOn: "Confirm"
+- extendedWaitUntil: { notVisible: "Send renewal documents to Ellen Ward.*", timeout: 10000 }

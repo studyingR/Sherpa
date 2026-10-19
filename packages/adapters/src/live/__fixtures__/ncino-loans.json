@@ -1,0 +1,1 @@
+{ "loans": [ { "loanId": "LN-0001", "relationshipId": "001Live000000Acme1", "productName": "Revolving line of credit", "commitmentAmount": 5000000, "outstandingBalance": 3100000, "riskGrade": { "current": 4 }, "maturityDate": "2027-12-17", "renewalInProgress": false, "asOfDate": "2026-10-18" } ] }

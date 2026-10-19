@@ -1,0 +1,12 @@
+appId: host.exp.Exponent
+name: "09 Deal intake for Acme → draft created, not submitted"
+---
+- runFlow: ../subflows/sign-in-maya.yaml
+- tapOn: "Accounts"
+- tapOn: "Acme Manufacturing.*"
+- tapOn: "New deal"
+- tapOn: "Send: They need a 2.5 million equipment loan.*"
+- extendedWaitUntil: { visible: ".*Is that right\\?", timeout: 15000 }
+- tapOn: "Send: Yes, that is right."
+- tapOn: "Send: Create draft"
+- extendedWaitUntil: { visible: ".*not submitted to credit.*", timeout: 15000 }

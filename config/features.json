@@ -1,0 +1,15 @@
+{
+  "F01_DEBRIEF": { "enabled": true },
+  "F02_BRIEF": { "enabled": true },
+  "F03_DRAFTS": { "enabled": true },
+  "F04_NUDGES": { "enabled": true },
+  "F05_REFERRALS": { "enabled": true },
+  "F06_WATCHLIST": { "enabled": true },
+  "F07_DEAL_INTAKE": { "enabled": true },
+  "F08_DOC_CHASE": { "enabled": true },
+  "F09_TALKING_POINTS": { "enabled": true },
+  "F10_COVERAGE": { "enabled": true },
+  "F11_LIVE_LISTENING": { "enabled": false, "complianceApproved": false, "allPartyConsentStates": ["CA", "FL", "IL", "MD", "MA", "MT", "NH", "PA", "WA"] },
+  "F12_PRICING_GUIDANCE": { "enabled": false, "complianceApproved": false },
+  "F13_HEALTH_SCORE": { "enabled": false, "complianceApproved": false, "modelValidated": false }
+}

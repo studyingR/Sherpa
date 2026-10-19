@@ -1,0 +1,32 @@
+{
+  "id": "G11",
+  "title": "Issue resolution with complaint",
+  "ctx": {
+    "accountName": "Castell Foods",
+    "meetingSubject": "Castell Foods issue resolution",
+    "attendees": [
+      {
+        "name": "Mark Castell",
+        "role": "Owner",
+        "external": true,
+        "contactId": "003Mock00000MarkC1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Mark is unhappy with the ACH returns fee. I'll ask treasury to review the fee by Friday."
+  ],
+  "expected": {
+    "complaint": true,
+    "mnpi": false,
+    "nextSteps": [
+      {
+        "title": "Ask treasury to review the fee",
+        "owner": "RM",
+        "dueDate": "2026-10-23",
+        "clientCommitment": false
+      }
+    ]
+  }
+}

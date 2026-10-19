@@ -1,0 +1,19 @@
+{
+  "name": "@sherpa/evals",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/score.ts",
+  "scripts": {
+    "evals": "node ../db/scripts/with-env.mjs tsx src/run.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint src",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sherpa/adapters": "workspace:*",
+    "@sherpa/agent": "workspace:*",
+    "@sherpa/shared": "workspace:*"
+  },
+  "devDependencies": { "tsx": "^4.20.6" }
+}

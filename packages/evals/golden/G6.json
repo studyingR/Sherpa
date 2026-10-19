@@ -1,0 +1,26 @@
+{
+  "id": "G6",
+  "title": "No next steps",
+  "ctx": {
+    "accountName": "Brightwater Farms",
+    "meetingSubject": "Brightwater check-in",
+    "attendees": [
+      {
+        "name": "Ellen Ward",
+        "role": "Owner",
+        "external": true,
+        "contactId": "003Mock00000EllnW1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "Quick check-in, nothing to follow up."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "nextSteps": [],
+    "noNextSteps": true
+  }
+}

@@ -1,0 +1,4 @@
+# Maestro E2E (docs/10 §2). Run against Expo Go on the iOS simulator with the server in mock mode:
+#   pnpm db:reset && pnpm dev   (then)   pnpm test:e2e
+flows:
+  - "flows/*.yaml"

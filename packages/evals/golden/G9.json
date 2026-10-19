@@ -1,0 +1,44 @@
+{
+  "id": "G9",
+  "title": "Line renewal",
+  "ctx": {
+    "accountName": "Harbor Logistics",
+    "meetingSubject": "Harbor Logistics line renewal",
+    "attendees": [
+      {
+        "name": "Ana Patel",
+        "role": "CFO",
+        "external": true,
+        "contactId": "003Mock00000AnaPa1"
+      }
+    ]
+  },
+  "rmTurns": [
+    "Yes.",
+    "We talked about renewing the eight million line of credit. Ana wants to keep the same structure. I'll send renewal options by Thursday. Credit admin should order the field exam by October 30."
+  ],
+  "expected": {
+    "complaint": false,
+    "mnpi": false,
+    "opportunities": [
+      {
+        "product": "Line of credit",
+        "amount": 8000000
+      }
+    ],
+    "nextSteps": [
+      {
+        "title": "Send renewal options",
+        "owner": "RM",
+        "dueDate": "2026-10-22",
+        "clientCommitment": false
+      },
+      {
+        "title": "Order the field exam",
+        "owner": "Credit Admin",
+        "dueDate": "2026-10-30",
+        "clientCommitment": false
+      }
+    ]
+  }
+}
